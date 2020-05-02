@@ -67,9 +67,9 @@ def generate_event(the_class):
 
 if __name__ == "__main__":
     term = sys.argv[1]
-    unipa_page_file = open(sys.argv[2])
+    unipa_page_file = open(sys.argv[2],encoding='utf-8')
     unipa_page = unipa_page_file.read()
-    unipa_page_soup = BeautifulSoup(unipa_page, "html.parser")
+    unipa_page_soup = BeautifulSoup(unipa_page, 'html.parser')
     classes_data = get_classes(unipa_page_soup)
     if term==2:
         classes_data = classes_data[48:]
