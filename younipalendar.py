@@ -6,11 +6,12 @@ from icalendar import Calendar, Event
 weekdays = ['mo','tu','we','th','fr','sa']
 
 class class_class:
-    def __init__(self, name, day, time, place):
+    def __init__(self, name, day, time, place, teacher):
         self.name = name
         self.day = day
         self.time = time
         self.place = place
+        self.teacher = teacher
 
 def get_classes(soup):
     return soup.find_all('td','colYobi')
@@ -20,9 +21,9 @@ def generate_class_class(classes):
     for time in range(6):
         for day in range(6):
             class_data = classes[time*6+day]
-            name, place = extract_data(class_data)
+            name, place, teacher = extract_data(class_data)
             if name!=None:
-                class_classes.append(class_class(name, day, time, place))
+                class_classes.append(class_class(name, day, time, place, teacher))
     return class_classes
 
 def extract_data(class_data):
@@ -30,7 +31,8 @@ def extract_data(class_data):
         return None, None
     name = class_data.find_all('div')[1].string
     place = class_data.find_all('div')[3].span.string
-    return name, place
+    teacher = class_data.find_all('div')[2].string
+    return name, place, teacher
 
 def generate_time(day,time):
     today = datetime.date.today()
@@ -52,8 +54,6 @@ def generate_time(day,time):
         etime = datetime.datetime(date.year,date.month,date.day,19,0,0)
     return stime, etime
 
-
-
 def generate_event(the_class):
     event = Event()
     event.add('summary', the_class.name)
@@ -62,8 +62,8 @@ def generate_event(the_class):
     stime, etime = generate_time(the_class.day,the_class.time)
     event.add('dtstart', stime)
     event.add('dtend',etime)
+    event.add('attendee',the_class.teacher)
     return event
-    
 
 if __name__ == "__main__":
     term = sys.argv[1]
