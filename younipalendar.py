@@ -5,7 +5,7 @@ from icalendar import Calendar, Event
 
 weekdays = ['mo','tu','we','th','fr','sa']
 
-class class_class:
+class ClassClass:
     def __init__(self, name, day, time, place, teacher):
         self.name = name
         self.day = day
@@ -23,7 +23,7 @@ def generate_class_class(classes):
             class_data = classes[time*6+day]
             name, place, teacher = extract_data(class_data)
             if name!=None:
-                class_classes.append(class_class(name, day, time, place, teacher))
+                class_classes.append(ClassClass(name, day, time, place, teacher))
     return class_classes
 
 def extract_data(class_data):
