@@ -28,7 +28,7 @@ def generate_class_class(classes):
 
 def extract_data(class_data):
     if 'noClass' in class_data.div['class']:
-        return None, None
+        return None, None, None
     name = class_data.find_all('div')[1].string
     place = class_data.find_all('div')[3].span.string
     teacher = class_data.find_all('div')[2].string
