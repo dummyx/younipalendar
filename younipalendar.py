@@ -112,5 +112,4 @@ if __name__ == "__main__":
     for i in classes:
         cal.add_component(generate_event(i))
     with open('classes.ics', 'wb') as output:
-        output = open('classes.ics', 'wb')
         output.write(cal.to_ical())
