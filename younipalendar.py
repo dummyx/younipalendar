@@ -91,7 +91,8 @@ def generate_event(the_class):
     event = Event()
     event.add('summary', the_class.name)
     event.add('rrule', {'freq': 'weekly', 'byday': weekdays[the_class.day]})
-    event.add('location', the_class.place)
+    if the_class.place is not None:
+        event.add('location', the_class.place)
     stime, etime = generate_time(the_class.day, the_class.time)
     event.add('dtstart', stime)
     event.add('dtend', etime)
@@ -105,7 +106,7 @@ if __name__ == "__main__":
         unipa_page = unipa_page_file.read()
         unipa_page_soup = BeautifulSoup(unipa_page, 'html.parser')
     classes_data = get_classes(unipa_page_soup)
-    if term == 2:
+    if term == '2':
         classes_data = classes_data[48:]
     classes = generate_class_class(classes_data)
     cal = Calendar()
