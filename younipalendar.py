@@ -100,13 +100,10 @@ def generate_event(the_class):
 
 
 if __name__ == "__main__":
-    term = sys.argv[1]
-    with open(sys.argv[2], encoding='utf-8') as unipa_page_file:
+    with open(sys.argv[1], encoding='utf-8') as unipa_page_file:
         unipa_page = unipa_page_file.read()
         unipa_page_soup = BeautifulSoup(unipa_page, 'html.parser')
     classes_data = get_classes(unipa_page_soup)
-    if term == 2:
-        classes_data = classes_data[48:]
     classes = generate_class_class(classes_data)
     cal = Calendar()
     for i in classes:
