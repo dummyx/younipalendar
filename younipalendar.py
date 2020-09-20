@@ -40,13 +40,13 @@ def extract_data(class_data):
     return name, place, teacher
 
 
-def generate_time(day, time):
+def generate_time(weekday, time):
     today = datetime.date.today()
-    date = today - datetime.timedelta(days=today.weekday()-day)
+    date = today - datetime.timedelta(days=today.weekday()-weekday)
     year = date.year
     month = date.month
     day = date.day
-    if day < 5:
+    if weekday < 5:
         if time == 0:
             stime = datetime.datetime(year, month, day, 9, 20, 0)
             etime = datetime.datetime(year, month, day, 11, 0, 0)
