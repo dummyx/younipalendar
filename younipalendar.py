@@ -24,8 +24,13 @@ def generate_class_class(classes):
     for time in range(6):
         for day in range(6):
             class_data = classes[time*6+day]
-            name, place, teacher = extract_data(class_data)
-            if name is not None:
+            data = extract_data(class_data)
+            if data is None:
+                continue
+            for d in data:
+                name = d['name']
+                place = d['place']
+                teacher = d['teacher']
                 class_classes.append(
                     ClassClass(name, day, time, place, teacher))
     return class_classes
@@ -33,11 +38,18 @@ def generate_class_class(classes):
 
 def extract_data(class_data):
     if 'noClass' in class_data.div['class']:
-        return None, None, None
-    name = class_data.find_all('div')[1].string
-    place = class_data.find_all('div')[3].span.string
-    teacher = class_data.find_all('div')[2].string
-    return name, place, teacher
+        return None
+    c = class_data.find_all('div', 'jugyo-info jugyo-normal')
+    data = []
+    for i in c:
+        name = i.find_all('div')[0].string
+        place = i.find_all('div')[2].span.string
+        teacher = i.find_all('div')[1].string
+        d = {'name': name,
+             'place': place,
+             'teacher': teacher}
+        data.append(d)
+    return data
 
 
 def generate_time(weekday, time):
