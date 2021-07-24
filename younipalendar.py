@@ -1,7 +1,4 @@
-import gi
-gi.require_version("Gtk","3.0")
-from gi.repository import Gtk
-
+import os
 import sys
 import datetime
 from bs4 import BeautifulSoup
@@ -9,17 +6,14 @@ from icalendar import Calendar, Event
 
 weekdays = ['mo', 'tu', 'we', 'th', 'fr', 'sa']
 
-def main_gui():
-    window = MainWindow()
-    window.show_all()
-    
-    Gtk.main()
+class ClassClass:
+    def __init__(self, name, day, time, place, teacher):
+        self.name = name
+        self.day = day
+        self.time = time
+        self.place = place
+        self.teacher = teacher
 
-def main_cli():
-    term = sys.argv[1]
-    input_file = sys.argv[2]
-    generate_ics(input_file, term)
-    
 
 def generate_ics(input_file:str, term:int=1, output_file:str='classes.ics'):
     with open(input_file, encoding='utf-8') as unipa_page_file:
@@ -34,108 +28,6 @@ def generate_ics(input_file:str, term:int=1, output_file:str='classes.ics'):
         cal.add_component(generate_event(i))
     with open(output_file, 'wb') as output:
         output.write(cal.to_ical())
-
-class MainWindow(Gtk.Window):
-    def __init__(self):
-        Gtk.Window.__init__(self, title="younipalendar")
-        self.grid = Gtk.Grid()
-        self.add(self.grid)
-
-        self.input_filename = 'page.html'
-        self.output_filename = 'classes.ics'
-        self.term = 1
-
-        self.connect("destroy", Gtk.main_quit)
-
-        self.input_entry = Gtk.Entry()
-        self.input_entry.set_text("Select input file. Default is \"page.html\".")
-
-        self.output_entry = Gtk.Entry()
-        self.output_entry.set_text("Select output file. Default is \"classes.ics\".")
-
-        self.input_button = Gtk.Button(label="open")
-        self.output_button = Gtk.Button(label="open")
-        self.generate_button = Gtk.Button(label="generate")
-
-        self.input_button.connect('clicked', self.select_input_file)
-        self.output_button.connect('clicked', self.select_output_file)
-        self.generate_button.connect('clicked', self.execute)
-
-        self.term1_radio = Gtk.RadioButton.new_with_label_from_widget(None, "Term 1")
-        self.term1_radio.connect("toggled", self.set_term, 1)
-
-        self.term2_radio = Gtk.RadioButton.new_from_widget(self.term1_radio)
-        self.term2_radio.set_label("Term 2")
-        self.term2_radio.connect("toggled", self.set_term, 2)
-
-        self.grid.attach(self.input_button, 20, 0, 5, 5)
-        self.grid.attach(self.output_button, 20, 5, 5, 5)
-        self.grid.attach(self.generate_button, 20, 15, 5, 5)
-
-        self.grid.attach(self.input_entry, 0, 0, 20, 5)
-        self.grid.attach(self.output_entry, 0, 5, 20, 5)
-
-        self.grid.attach(self.term1_radio,0, 10, 5, 5)
-        self.grid.attach(self.term2_radio,5, 10, 5, 5)
-
-    def select_input_file(self, widget):
-        dialog = Gtk.FileChooserDialog(
-            title="Please choose a file", parent=self, action=Gtk.FileChooserAction.OPEN
-        )
-        dialog.add_buttons(
-            Gtk.STOCK_CANCEL,
-            Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OPEN,
-            Gtk.ResponseType.OK,
-        )
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            self.input_filename = dialog.get_filename()
-            self.input_entry.set_text(self.input_filename)
-        dialog.destroy()
-
-    def select_output_file(self, widget):
-        dialog = Gtk.FileChooserDialog(
-            title="Please choose a file", parent=self, action=Gtk.FileChooserAction.OPEN
-        )
-        dialog.add_buttons(
-            Gtk.STOCK_CANCEL,
-            Gtk.ResponseType.CANCEL,
-            Gtk.STOCK_OPEN,
-            Gtk.ResponseType.OK,
-        )
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            self.output_filename = dialog.get_filename()
-            self.output_entry.set_text(self.output_filename)
-        dialog.destroy()
-
-    def execute(self,widget):
-        generate_ics(self.input_filename, self.term, self.output_filename)
-        dialog = Gtk.MessageDialog(
-            transient_for=self,
-            flags=0,
-            message_type=Gtk.MessageType.INFO,
-            buttons=Gtk.ButtonsType.OK,
-            text="Congratulations!",
-        )
-        dialog.format_secondary_text(
-            "The ics file has been generated."
-        )
-        dialog.run()
-        dialog.destroy()
-
-    def set_term(term:int):
-        self.term = term
-
-
-class ClassClass:
-    def __init__(self, name, day, time, place, teacher):
-        self.name = name
-        self.day = day
-        self.time = time
-        self.place = place
-        self.teacher = teacher
 
 
 def get_classes(soup):
@@ -235,8 +127,58 @@ def generate_event(the_class):
     return event
 
 
-if __name__ == "__main__":
-    if len(sys.argv) != 1:
-        main_cli()
+from guietta import _, Gui, R1, Quit, QFileDialog, QMessageBox
+
+gui = Gui(
+	[  "Input file",      "__a__",  ['Select input file'] ],
+	[ "Output file",      "__b__", ['Select output file'] ],
+    [ "Select term",            _,             ["Do it!"] ],
+	[   R1('First'), R1('Second'),                   Quit ]
+)
+gui.b = 'classes.ics'
+gui.First.setChecked(True)
+
+
+def get_filename(type):
+    def decorator(func):
+        def file_selector(gui, *args):
+            if type == 'IF':
+                s = "HTML source file (*.html)"
+            elif type == 'OF':
+                s = "ICS calendar file (*.ics)"
+            filename = QFileDialog.getOpenFileName(None, "Open File",
+                                                   os. getcwd(),
+                                                   s)[0]
+            if filename != '':
+                func(filename)
+        return file_selector
+    return decorator
+
+
+@get_filename('IF')
+def get_input_filename(filename):
+    gui.a = filename
+
+
+@get_filename('OF')
+def get_output_filename(filename):
+    gui.b = filename
+
+
+def excute(gui, *args):
+    if gui.First.isChecked():
+        term = 1
     else:
-        main_gui()
+        term = 2
+    generate_ics(gui.a,term,gui.b)
+    QMessageBox.information(None, 'SUCCEED!', 'The ics file has been generated!')
+
+
+gui.events(
+	[  _,      _,   get_input_filename ],
+	[  _,      _,  get_output_filename ],
+    [  _,      _,               excute ],
+	[  _,      _,                     _]
+)
+
+gui.run()
