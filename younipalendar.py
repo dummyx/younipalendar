@@ -1,10 +1,20 @@
 import os
-import sys
 import datetime
 from bs4 import BeautifulSoup
 from icalendar import Calendar, Event
 
 weekdays = ['mo', 'tu', 'we', 'th', 'fr', 'sa']
+
+weekday_period_stime = [
+    (9, 20, 0), (11, 10, 0), (13, 40, 0), (15, 30, 0), (17, 20, 0)
+]
+
+sat_period_stime = [
+    (9, 0, 0), (10, 40, 0), (13, 10, 0), (14, 50, 0), (16, 30, 0), (18, 10, 0), (19, 50, 0)
+]
+
+weekday_period_duration = 100
+sat_period_duration = 90
 
 class ClassClass:
     def __init__(self, name, day, time, place, teacher):
@@ -73,44 +83,13 @@ def generate_time(weekday, time):
     year = date.year
     month = date.month
     day = date.day
-    if weekday < 5:
-        if time == 0:
-            stime = datetime.datetime(year, month, day, 9, 20, 0)
-            etime = datetime.datetime(year, month, day, 11, 0, 0)
-        if time == 1:
-            stime = datetime.datetime(year, month, day, 11, 10, 0)
-            etime = datetime.datetime(year, month, day, 12, 50, 0)
-        if time == 2:
-            stime = datetime.datetime(year, month, day, 13, 40, 0)
-            etime = datetime.datetime(year, month, day, 15, 20, 0)
-        if time == 3:
-            stime = datetime.datetime(year, month, day, 15, 30, 0)
-            etime = datetime.datetime(year, month, day, 17, 10, 0)
-        if time == 4:
-            stime = datetime.datetime(year, month, day, 17, 20, 0)
-            etime = datetime.datetime(year, month, day, 19, 0, 0)
-    else:
-        if time == 0:
-            stime = datetime.datetime(year, month, day, 9, 0, 0)
-            etime = datetime.datetime(year, month, day, 10, 30, 0)
-        if time == 1:
-            stime = datetime.datetime(year, month, day, 10, 40, 0)
-            etime = datetime.datetime(year, month, day, 12, 10, 0)
-        if time == 2:
-            stime = datetime.datetime(year, month, day, 13, 10, 0)
-            etime = datetime.datetime(year, month, day, 14, 40, 0)
-        if time == 3:
-            stime = datetime.datetime(year, month, day, 14, 50, 0)
-            etime = datetime.datetime(year, month, day, 16, 20, 0)
-        if time == 4:
-            stime = datetime.datetime(year, month, day, 16, 30, 0)
-            etime = datetime.datetime(year, month, day, 18, 0, 0)
-        if time == 5:
-            stime = datetime.datetime(year, month, day, 18, 10, 0)
-            etime = datetime.datetime(year, month, day, 19, 40, 0)
-        if time == 6:
-            stime = datetime.datetime(year, month, day, 19, 50, 0)
-            etime = datetime.datetime(year, month, day, 21, 20, 0)
+
+    hms = weekday_period_stime[time] if weekday<5 else sat_period_stime[time]
+    duration = weekday_period_duration if weekday<5 else sat_period_duration
+
+    stime = datetime.datetime(year, month, day, *hms)
+    time_delta = datetime.timedelta(minutes=duration)
+    etime = stime + time_delta
     return stime, etime
 
 
