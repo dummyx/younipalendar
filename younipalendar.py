@@ -154,10 +154,10 @@ def excute(gui, *args):
 
 
 gui.events(
-	[  _,      _,   get_input_filename ],
-	[  _,      _,  get_output_filename ],
-    [  _,      _,               excute ],
-	[  _,      _,                     _]
+    [  _ ,  _ ,   get_input_filename ],
+    [  _ ,  _ ,  get_output_filename ],
+    [  _ ,  _ ,               excute ],
+    [  _ ,  _ ,                    _ ]
 )
 
 gui.run()
