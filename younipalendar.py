@@ -30,7 +30,7 @@ def generate_ics(input_file:str, term:int=1, output_file:str='classes.ics'):
         unipa_page = unipa_page_file.read()
         unipa_page_soup = BeautifulSoup(unipa_page, 'html.parser')
     classes_data = get_classes(unipa_page_soup)
-    if term == '2':
+    if term == 2:
         classes_data = classes_data[48:]
     classes = generate_class_class(classes_data)
     cal = Calendar()
@@ -109,10 +109,10 @@ def generate_event(the_class):
 from guietta import _, Gui, R1, Quit, QFileDialog, QMessageBox
 
 gui = Gui(
-	[  "Input file",      "__a__",  ['Select input file'] ],
-	[ "Output file",      "__b__", ['Select output file'] ],
+    [  "Input file",      "__a__",  ['Select input file'] ],
+    [ "Output file",      "__b__", ['Select output file'] ],
     [ "Select term",            _,             ["Do it!"] ],
-	[   R1('First'), R1('Second'),                   Quit ]
+    [   R1('First'), R1('Second'),                   Quit ]
 )
 gui.b = 'classes.ics'
 gui.First.setChecked(True)
