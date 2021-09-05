@@ -1,7 +1,7 @@
 # younipalendar
 
 ## Usage
-Just use the GUI.
+Install guietta then run the script.
 
 ## Disclaimer
 It may not work.
